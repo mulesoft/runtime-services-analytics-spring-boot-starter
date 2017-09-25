@@ -1,0 +1,2 @@
+org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
+com.mulesoft.runtime.services.analytics.integration.autoconfiguration.AnalyticsAutoConfiguration
