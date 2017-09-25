@@ -72,7 +72,6 @@
     </developers>
 
     <modules>
-        <module>analytics-integration-spring-boot-autoconfigure</module>
         <module>analytics-integration-spring-boot-starter</module>
     </modules>
 

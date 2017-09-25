@@ -11,12 +11,51 @@
 
     <artifactId>analytics-integration-spring-boot-starter</artifactId>
 
+
     <dependencies>
         <dependency>
-            <groupId>com.mulesoft.runtime.services</groupId>
-            <artifactId>analytics-integration-spring-boot-autoconfigure</artifactId>
-            <version>${project.version}</version>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-context</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-autoconfigure</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>io.reactivex</groupId>
+            <artifactId>rxjava</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-api</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>javax.inject</groupId>
+            <artifactId>javax.inject</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.google.guava</groupId>
+            <artifactId>guava</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.fasterxml.jackson.core</groupId>
+            <artifactId>jackson-core</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.fasterxml.jackson.core</groupId>
+            <artifactId>jackson-databind</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.mulesoft.anypoint.rest</groupId>
+            <artifactId>anypoint-simple-rest-client</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.mulesoft.anypoint.rest</groupId>
+            <artifactId>anypoint-simple-http-client</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.segment.analytics.java</groupId>
+            <artifactId>analytics</artifactId>
         </dependency>
     </dependencies>
-
 </project>
