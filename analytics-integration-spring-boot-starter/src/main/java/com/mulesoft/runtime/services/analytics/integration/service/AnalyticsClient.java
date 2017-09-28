@@ -12,6 +12,7 @@ import com.fasterxml.jackson.databind.exc.InvalidFormatException;
 import com.mulesoft.anypoint.httpclient.AnypointPlatformRequest;
 import com.mulesoft.anypoint.httpclient.AnypointPlatformRequestBuilder;
 import com.mulesoft.anypoint.restclient.RestClient;
+import com.mulesoft.runtime.services.analytics.integration.log.RestClientLogHelper;
 import com.mulesoft.runtime.services.analytics.integration.model.MetricsIngestException;
 import com.mulesoft.runtime.services.analytics.integration.model.MetricsResponseItem;
 import com.mulesoft.runtime.services.analytics.integration.model.Period;
@@ -33,6 +34,7 @@ import java.util.List;
 public class AnalyticsClient {
 
     private static final String EMPTY_BODY = "";
+
     private static Logger logger = LoggerFactory.getLogger(AnalyticsClient.class);
 
     private final String analyticsIngestUrl;
@@ -43,34 +45,46 @@ public class AnalyticsClient {
 
     private final ObjectMapper objectMapper;
 
+    private final RestClientLogHelper logHelper;
+
     @Inject
     public AnalyticsClient(
-            @Value("${analytics.ingest.url}") String analyticsIngestUrl,
-            @Value("${analytics.query.url}") String analyticsQueryUrl,
-            RestClient httpClient) {
+        @Value("${analytics.ingest.url}") String analyticsIngestUrl,
+        @Value("${analytics.query.url}") String analyticsQueryUrl,
+        RestClient httpClient) {
         this.analyticsIngestUrl = analyticsIngestUrl;
         this.analyticsQueryUrl = analyticsQueryUrl;
         this.httpClient = httpClient;
         this.objectMapper = new ObjectMapper();
+        logHelper = new RestClientLogHelper(logger);
     }
 
     public Observable<RawResponse> postJson(String payload) {
         logger.info("sending metrics to analytics ingest");
-        return httpClient.call(() -> new AnypointPlatformRequestBuilder("PostMetrics", "POST").setUrl(analyticsIngestUrl).addHeader("Content-Type", "application/json").setBody(payload).build(),
-                                     anypointPlatformResponse -> new RawResponse(anypointPlatformResponse.getStatusCode(), EMPTY_BODY)).asObservable()
-                .doOnError(throwable -> {
-                    logger.warn("could not execute ingest request to analytics", throwable);
-                    throw new MetricsIngestException("Could not execute ingest request to analytics", throwable);
-                });
+        return httpClient.call(() -> {
+            AnypointPlatformRequest request = new AnypointPlatformRequestBuilder("PostMetrics", "POST").setUrl(analyticsIngestUrl)
+                .addHeader("Content-Type", "application/json").setBody(payload).build();
+            logHelper.logRequest(request.getName(), request);
+            return request;
+
+        }, anypointPlatformResponse -> {
+            logHelper.logResponse(anypointPlatformResponse);
+            return new RawResponse(anypointPlatformResponse.getStatusCode(), EMPTY_BODY);
+        }).asObservable()
+            .doOnError(throwable -> {
+                logger.warn("could not execute ingest request to analytics", throwable);
+                throw new MetricsIngestException("Could not execute ingest request to analytics", throwable);
+            });
     }
 
     public Single<List<MetricsResponseItem>> getMetricsByDate(
-            String organizationId,
-            OffsetDateTime startDate,
-            OffsetDateTime endDate,
-            Period period
+        String organizationId,
+        OffsetDateTime startDate,
+        OffsetDateTime endDate,
+        Period period
     ) {
-        logger.info("get metrics for {} / {} / {} / {}", organizationId, startDate.toString(), endDate.toString(), period.toString());
+        logger.info("get metrics for {} / {} / {} / {}", organizationId, startDate.toString(), endDate.toString(),
+                    period.toString());
 
         AnypointPlatformRequest
             queryRequest = generateQueryRequest(buildMetricsByDateUrl(organizationId, period), startDate, startDate);
@@ -78,40 +92,45 @@ public class AnalyticsClient {
         logger.debug("analytics query metrics by date url {}", queryRequest.toHttpRequest().getUrl());
 
         return executeQuery(queryRequest)
-                .map(this::invalidStatusCodesToExceptions)
-                .map(this::rawResponseToMetricsItems);
+            .map(this::invalidStatusCodesToExceptions)
+            .map(this::rawResponseToMetricsItems);
     }
 
     public Single<List<MetricsResponseItem>> getMetricsByEnvironment(
-            String organizationId,
-            String environmentId,
-            OffsetDateTime startDate,
-            OffsetDateTime endDate,
-            Period period
+        String organizationId,
+        String environmentId,
+        OffsetDateTime startDate,
+        OffsetDateTime endDate,
+        Period period
     ) {
-        logger.info("get metrics for {} / {} / {} / {} / {}", organizationId, environmentId, startDate.toString(), endDate.toString(), period.toString());
+        logger.info("get metrics for {} / {} / {} / {} / {}", organizationId, environmentId, startDate.toString(),
+                    endDate.toString(), period.toString());
 
-        AnypointPlatformRequest queryRequest = generateQueryRequest(buildMetricsByEnvironmentUrl(organizationId, environmentId, period), startDate, endDate);
+        AnypointPlatformRequest queryRequest =
+            generateQueryRequest(buildMetricsByEnvironmentUrl(organizationId, environmentId, period), startDate, endDate);
 
         logger.debug("analytics query metrics by environment url {}", queryRequest.toHttpRequest().getUrl());
 
         return executeQuery(queryRequest)
-                .map(this::invalidStatusCodesToExceptions)
-                .map(this::rawResponseToMetricsItems);
+            .map(this::invalidStatusCodesToExceptions)
+            .map(this::rawResponseToMetricsItems);
     }
 
     private AnypointPlatformRequest generateQueryRequest(String url, OffsetDateTime startDate, OffsetDateTime endDate) {
         return new AnypointPlatformRequestBuilder("QueryMetrics", "GET").setUrl(url)
-                    .addQueryParam("start_date", startDate.toString())
-                    .addQueryParam("end_date", endDate.toString())
-                    .addQueryParam("group_by", "event_type").build();
+            .addQueryParam("start_date", startDate.toString())
+            .addQueryParam("end_date", endDate.toString())
+            .addQueryParam("group_by", "event_type").build();
     }
 
     private Single<RawResponse> executeQuery(AnypointPlatformRequest request) {
-        return httpClient.call(() -> request, (response) -> {
+        return httpClient.call(() -> {
+            logHelper.logRequest(request.getName(), request);
+            return request;
+        }, (response) -> {
+            logHelper.logResponse(response);
             int statusCode = response.getStatusCode();
             String responseBody;
-
             try {
                 responseBody = response.getResponseBody();
             } catch (Exception e) {
@@ -125,15 +144,15 @@ public class AnalyticsClient {
 
     private String buildMetricsByDateUrl(String organizationId, Period period) {
         return analyticsQueryUrl
-                + "/" + organizationId
-                + "/" + period.toString();
+            + "/" + organizationId
+            + "/" + period.toString();
     }
 
     private String buildMetricsByEnvironmentUrl(String organizationId, String environmentId, Period period) {
         return analyticsQueryUrl
-                + "/" + organizationId
-                + "/" + environmentId
-                + "/" + period.toString();
+            + "/" + organizationId
+            + "/" + environmentId
+            + "/" + period.toString();
     }
 
     private List<Param> buildQueryParams(OffsetDateTime startDate, OffsetDateTime endDate, String groupBy) {
@@ -150,13 +169,15 @@ public class AnalyticsClient {
             return rawResponse;
         } else {
             logger.warn("unexpected status code {} from analytics with body: {}", statusCode, rawResponse.getResponseBody());
-            throw new MetricsIngestException("Unexpected status code " + statusCode + " from analytics: " + rawResponse.getResponseBody());
+            throw new MetricsIngestException(
+                "Unexpected status code " + statusCode + " from analytics: " + rawResponse.getResponseBody());
         }
     }
 
     private List<MetricsResponseItem> rawResponseToMetricsItems(RawResponse rawResponse) {
         try {
             return objectMapper.readValue(rawResponse.getResponseBody(), new TypeReference<List<MetricsResponseItem>>() {
+
             });
         } catch (JsonParseException | InvalidFormatException e) {
             throw new MetricsIngestException(e.getMessage(), e);

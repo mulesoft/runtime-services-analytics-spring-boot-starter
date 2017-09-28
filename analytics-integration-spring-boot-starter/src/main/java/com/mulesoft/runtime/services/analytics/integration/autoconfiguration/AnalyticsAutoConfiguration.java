@@ -21,7 +21,6 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 @Configuration
-@EnableAutoConfiguration
 public class AnalyticsAutoConfiguration {
 
     @Bean
@@ -33,13 +32,14 @@ public class AnalyticsAutoConfiguration {
     }
 
     @Bean
-    @ConditionalOnProperty(value = "analytics.subscription.enabled", havingValue = "true")
+    @ConditionalOnProperty(value = "segment.writekey")
     public SegmentNotificationSubscriber segmentNotificationSubscriber(MetricsIngestService metricsIngestService,
                                                                        @Value("${analytics.ingest.poolSize:8}") int poolSize) {
         return new SegmentNotificationSubscriber(metricsIngestService, poolSize);
     }
 
     @Bean
+    @ConditionalOnProperty(value = "analytics.subscription.enabled", havingValue = "true")
     public MetricsIngestService metricsIngestService(AnalyticsClient anypointAnalyticsClient,
                                                      @Value("${segment.writekey}") String writekey,
                                                      @Value("${analytics.senderId}") String analyticsSenderId,
@@ -50,6 +50,7 @@ public class AnalyticsAutoConfiguration {
     }
 
     @Bean
+    @ConditionalOnProperty(value = "analytics.subscription.enabled", havingValue = "true")
     public AnalyticsClient analyticsClient(@Value("${analytics.ingest.url}") String analyticsIngestUrl,
                                            @Value("${analytics.query.url}") String analyticsQueryUrl,
                                            RestClient httpClient) {
@@ -58,12 +59,14 @@ public class AnalyticsAutoConfiguration {
 
     @Bean
     @ConditionalOnMissingBean(RestClient.class)
+    @ConditionalOnProperty(value = "analytics.subscription.enabled", havingValue = "true")
     public RestClient restClient(HttpClient httpClient) {
         return new BasicRestClient(httpClient);
     }
 
     @Bean
     @ConditionalOnMissingBean(HttpClient.class)
+    @ConditionalOnProperty(value = "analytics.subscription.enabled", havingValue = "true")
     public HttpClient objectStoreDefaultHttpClient(@Value("${http.client.insecure:false}") boolean insecure,
                                                    @Value("${http.client.timeout:20000}") int timeout) {
         return new HttpClient.Builder().setInsecure(insecure).setTimeout(timeout).build();
