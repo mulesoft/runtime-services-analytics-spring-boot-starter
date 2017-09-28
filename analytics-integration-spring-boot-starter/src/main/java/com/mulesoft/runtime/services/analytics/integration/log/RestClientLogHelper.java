@@ -1,3 +1,8 @@
+/*
+ * (c) 2003-2017 MuleSoft, Inc. This software is protected under international copyright law. All use of this software is subject to
+ * MuleSoft's Master Subscription Agreement (or other Terms of Service) separately entered into between you and MuleSoft. If such an
+ * agreement is not in place, you may not use the software.
+ */
 //
 // Source code recreated from a .class file by IntelliJ IDEA
 // (powered by Fernflower decompiler)
@@ -13,7 +18,6 @@ import org.springframework.util.StringUtils;
 
 import java.io.IOException;
 import java.util.Arrays;
-import java.util.List;
 
 public class RestClientLogHelper {
     private Logger logger;
@@ -23,7 +27,7 @@ public class RestClientLogHelper {
     }
 
     public void logRequest(String requestDescription, AnypointPlatformRequest anypointRequest) {
-        this.logRequest(requestDescription, anypointRequest, (String)null);
+        this.logRequest(requestDescription, anypointRequest, null);
     }
 
     public void logRequest(String operation, AnypointPlatformRequest anypointRequest, String body) {
@@ -47,8 +51,8 @@ public class RestClientLogHelper {
             stringBuilder.append("} ");
             stringBuilder.append("HEADERS {");
             request.getHeaders().forEach((header) -> {
-                this.stringsAppend(stringBuilder, "'", (String)header.getKey(), "'");
-                this.stringsAppend(stringBuilder, ",'", (String)((List)header.getValue()).stream().findFirst().orElse(""), "'");
+                this.stringsAppend(stringBuilder, "'", header.getKey(), "'");
+                this.stringsAppend(stringBuilder, ",'", header.getValue().stream().findFirst().orElse(""), "'");
             });
             stringBuilder.append("} ");
             if (!StringUtils.isEmpty(body)) {
@@ -66,7 +70,7 @@ public class RestClientLogHelper {
             stringBuilder.append("HEADERS {");
             response.getHeaders().forEach((k, v) -> {
                 this.stringsAppend(stringBuilder, "'", k, "'");
-                this.stringsAppend(stringBuilder, ",'", (String)v.stream().findFirst().orElse(""), "'; ");
+                this.stringsAppend(stringBuilder, ",'", v.stream().findFirst().orElse(""), "'; ");
             });
             stringBuilder.append("} ");
 
