@@ -32,7 +32,7 @@ public class AnalyticsAutoConfiguration {
     }
 
     @Bean
-    @ConditionalOnProperty(value = "segment.writekey")
+    @ConditionalOnProperty(value = "segment.subscription.enabled", havingValue = "true")
     public SegmentNotificationSubscriber segmentNotificationSubscriber(MetricsIngestService metricsIngestService,
                                                                        @Value("${analytics.ingest.poolSize:8}") int poolSize) {
         return new SegmentNotificationSubscriber(metricsIngestService, poolSize);
