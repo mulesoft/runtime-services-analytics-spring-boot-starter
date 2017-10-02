@@ -24,7 +24,7 @@ import org.springframework.context.annotation.Configuration;
 public class AnalyticsAutoConfiguration {
 
     @Bean
-    @ConditionalOnProperty(value = "analytics.subscription.enabled", havingValue = "true")
+    @ConditionalOnProperty(value = "analytics.subscription.enabled", havingValue = "true", matchIfMissing = true)
     public AnalyticsNotificationSubscriber analyticsNotificationSubscriber(MetricsIngestService metricsIngestService,
                                                                            @Value("${analytics.senderId}") String analyticsSenderId,
                                                                            @Value("${analytics.ingest.poolSize:8}") int poolSize) {
@@ -32,14 +32,14 @@ public class AnalyticsAutoConfiguration {
     }
 
     @Bean
-    @ConditionalOnProperty(value = "segment.subscription.enabled", havingValue = "true")
+    @ConditionalOnProperty(value = "segment.subscription.enabled", havingValue = "true", matchIfMissing = true)
     public SegmentNotificationSubscriber segmentNotificationSubscriber(MetricsIngestService metricsIngestService,
                                                                        @Value("${analytics.ingest.poolSize:8}") int poolSize) {
         return new SegmentNotificationSubscriber(metricsIngestService, poolSize);
     }
 
     @Bean
-    @ConditionalOnProperty(value = "analytics.subscription.enabled", havingValue = "true")
+    @ConditionalOnProperty(value = "analytics.subscription.enabled", havingValue = "true", matchIfMissing = true)
     public MetricsIngestService metricsIngestService(AnalyticsClient anypointAnalyticsClient,
                                                      @Value("${segment.writekey}") String writekey,
                                                      @Value("${analytics.senderId}") String analyticsSenderId,
@@ -50,7 +50,7 @@ public class AnalyticsAutoConfiguration {
     }
 
     @Bean
-    @ConditionalOnProperty(value = "analytics.subscription.enabled", havingValue = "true")
+    @ConditionalOnProperty(value = "analytics.subscription.enabled", havingValue = "true", matchIfMissing = true)
     public AnalyticsClient analyticsClient(@Value("${analytics.ingest.url}") String analyticsIngestUrl,
                                            @Value("${analytics.query.url}") String analyticsQueryUrl,
                                            RestClient httpClient) {
