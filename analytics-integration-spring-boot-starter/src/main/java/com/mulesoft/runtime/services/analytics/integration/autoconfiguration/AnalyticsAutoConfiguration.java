@@ -10,6 +10,8 @@ import com.mulesoft.anypoint.httpclient.HttpClient;
 import com.mulesoft.anypoint.restclient.BasicRestClient;
 import com.mulesoft.anypoint.restclient.RestClient;
 import com.mulesoft.runtime.services.analytics.integration.service.AnalyticsClient;
+import com.mulesoft.runtime.services.analytics.integration.service.AnalyticsIngestClient;
+import com.mulesoft.runtime.services.analytics.integration.service.AnalyticsQueryClient;
 import com.mulesoft.runtime.services.analytics.integration.service.MetricsIngestService;
 import com.mulesoft.runtime.servicies.analytics.integration.subscriber.AnalyticsNotificationSubscriber;
 import com.mulesoft.runtime.servicies.analytics.integration.subscriber.SegmentNotificationSubscriber;
@@ -51,11 +53,22 @@ public class AnalyticsAutoConfiguration {
 
     @Bean
     @ConditionalOnProperty(value = "analytics.subscription.enabled", havingValue = "true", matchIfMissing = true)
-    public AnalyticsClient analyticsClient(@Value("${analytics.ingest.url}") String analyticsIngestUrl,
-                                           @Value("${analytics.query.url}") String analyticsQueryUrl,
-                                           RestClient httpClient) {
-        return new AnalyticsClient(analyticsIngestUrl, analyticsQueryUrl, httpClient);
+    public AnalyticsClient analyticsClient(AnalyticsQueryClient queryClient, AnalyticsIngestClient ingestClient) {
+        return new AnalyticsClient(queryClient, ingestClient);
     }
+
+    @Bean
+    @ConditionalOnProperty(value = "analytics.subscription.enabled", havingValue = "true", matchIfMissing = true)
+    public AnalyticsQueryClient analyticsQueryClient(@Value("${analytics.query.url}") String analyticsQueryUrl, RestClient restClient) {
+        return new AnalyticsQueryClient(analyticsQueryUrl, restClient);
+    }
+
+    @Bean
+    @ConditionalOnProperty(value = "analytics.subscription.enabled", havingValue = "true", matchIfMissing = true)
+    public AnalyticsIngestClient analyticsIngestClient(@Value("${analytics.ingest.url}") String analyticsIngestUrl, RestClient restClient) {
+        return new AnalyticsIngestClient(analyticsIngestUrl, restClient);
+    }
+
 
     @Bean
     @ConditionalOnMissingBean(RestClient.class)
