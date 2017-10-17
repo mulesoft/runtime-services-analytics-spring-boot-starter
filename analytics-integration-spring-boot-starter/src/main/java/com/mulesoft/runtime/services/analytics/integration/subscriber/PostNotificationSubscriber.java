@@ -3,7 +3,7 @@
  * MuleSoft's Master Subscription Agreement (or other Terms of Service) separately entered into between you and MuleSoft. If such an
  * agreement is not in place, you may not use the software.
  */
-package com.mulesoft.runtime.servicies.analytics.integration.subscriber;
+package com.mulesoft.runtime.services.analytics.integration.subscriber;
 
 
 import com.mulesoft.runtime.services.analytics.integration.model.Notification;

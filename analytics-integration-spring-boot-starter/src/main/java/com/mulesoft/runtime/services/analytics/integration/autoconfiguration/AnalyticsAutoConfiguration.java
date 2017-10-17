@@ -13,10 +13,9 @@ import com.mulesoft.runtime.services.analytics.integration.service.AnalyticsClie
 import com.mulesoft.runtime.services.analytics.integration.service.AnalyticsIngestClient;
 import com.mulesoft.runtime.services.analytics.integration.service.AnalyticsQueryClient;
 import com.mulesoft.runtime.services.analytics.integration.service.MetricsIngestService;
-import com.mulesoft.runtime.servicies.analytics.integration.subscriber.AnalyticsNotificationSubscriber;
-import com.mulesoft.runtime.servicies.analytics.integration.subscriber.SegmentNotificationSubscriber;
+import com.mulesoft.runtime.services.analytics.integration.subscriber.AnalyticsNotificationSubscriber;
+import com.mulesoft.runtime.services.analytics.integration.subscriber.SegmentNotificationSubscriber;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
