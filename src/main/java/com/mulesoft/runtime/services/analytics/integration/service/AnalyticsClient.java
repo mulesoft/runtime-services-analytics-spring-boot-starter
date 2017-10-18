@@ -23,7 +23,6 @@ public class AnalyticsClient {
 
     private AnalyticsIngestClient ingestClient;
 
-
     @Inject
     public AnalyticsClient(AnalyticsQueryClient queryClient, AnalyticsIngestClient ingestClient) {
         this.queryClient = queryClient;

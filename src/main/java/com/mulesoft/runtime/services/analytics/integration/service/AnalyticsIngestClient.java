@@ -46,7 +46,7 @@ public class AnalyticsIngestClient {
         return httpClient.call(() -> {
             AnypointPlatformRequest request = new AnypointPlatformRequestBuilder("PostMetrics", "POST").setUrl(analyticsIngestUrl)
                 .addHeader("Content-Type", "application/json").setBody(payload).build();
-            logHelper.logRequest(request.getName(), request);
+            logHelper.logRequest(request.getName(), request, payload);
             return request;
 
         }, anypointPlatformResponse -> {
