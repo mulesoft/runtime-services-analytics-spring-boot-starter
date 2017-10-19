@@ -6,7 +6,7 @@
 
     <groupId>com.mulesoft.runtime.services</groupId>
     <artifactId>runtime-services-analytics-spring-boot-starter</artifactId>
-    <version>1.0.0-SNAPSHOT</version>
+    <version>1.0.0</version>
     <packaging>jar</packaging>
 
     <inceptionYear>2076</inceptionYear>
