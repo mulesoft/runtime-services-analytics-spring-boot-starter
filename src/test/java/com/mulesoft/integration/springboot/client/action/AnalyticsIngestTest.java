@@ -33,7 +33,7 @@ public class AnalyticsIngestTest {
 
     private TestRestTemplate restTemplate = new TestRestTemplate();
 
-    @Value("${analytics.query.url}")
+    @Value("${analytics.ingest.url}")
     private String analyticsQueueUrl;
 
     HttpHeaders headers = new HttpHeaders();
