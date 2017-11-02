@@ -540,14 +540,14 @@
 
     <distributionManagement>
         <repository>
-            <id>mule-ee-releases</id>
-            <name>Anypoint MQ Release Repository</name>
-            <url>https://repository-master.mulesoft.org/nexus/content/repositories/ci-releases</url>
+            <id>build-releases</id>
+            <name>Releases Repository</name>
+            <url>https://nexus.build.msap.io/nexus/content/repositories/releases</url>
         </repository>
         <snapshotRepository>
-            <id>mule-ee-snapshots</id>
-            <name>Anypoint MQ Snapshot Repository</name>
-            <url>https://repository-master.mulesoft.org/nexus/content/repositories/ci-snapshots</url>
+            <id>build-snapshots</id>
+            <name>Snapshots Repository</name>
+            <url>https://nexus.build.msap.io/nexus/content/repositories/snapshots</url>
             <uniqueVersion>false</uniqueVersion>
         </snapshotRepository>
     </distributionManagement>
