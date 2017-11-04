@@ -82,137 +82,40 @@
     <build>
         <plugins>
             <plugin>
-                <artifactId>maven-compiler-plugin</artifactId>
-                <configuration>
-                    <source>1.8</source>
-                    <target>1.8</target>
-                    <showWarnings>true</showWarnings>
-                    <compilerArgs>
-                        <arg>-Xlint:all</arg>
-                        <arg>-Werror</arg>
-                    </compilerArgs>
-                </configuration>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>build-helper-maven-plugin</artifactId>
+                <version>3.0.0</version>
+                <executions>
+                    <execution>
+                        <id>add-test-source</id>
+                        <phase>generate-test-sources</phase>
+                        <goals>
+                            <goal>add-test-source</goal>
+                        </goals>
+                        <configuration>
+                            <sources>
+                                <source>src/it/java</source>
+                            </sources>
+                        </configuration>
+                    </execution>
+                </executions>
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-enforcer-plugin</artifactId>
-                <version>1.4.1</version>
-                <executions>
-                    <execution>
-                        <id>enforce-banned-dependencies</id>
-                        <goals>
-                            <goal>enforce</goal>
-                        </goals>
-                        <configuration>
-                            <rules>
-                                <!--
-                                    this library is standardized exclusively on slf4j on top of logback.
-                                    Forbidding any other logging subsystem
-                                -->
-                                <bannedDependencies>
-                                    <excludes>
-                                        <exclude>commons-logging:*</exclude>
-                                        <exclude>org.apache.logging.log4j:log4j-slf4j</exclude>
-                                        <exclude>org.apache.logging.log4j:*</exclude>
-                                    </excludes>
-                                </bannedDependencies>
-
-                                <!--
-                                    This rule checks that the versions within the reactor are consistent furthermore
-                                    it will check that every module within the project contains a parent and that the
-                                    parent is part of the reactor build. Furthermore it will be checked if dependencies
-                                    are intermodule dependencies that they using the same version as given
-                                    by the reactor.
-                                -->
-                                <reactorModuleConvergence>
-                                    <message>The reactor is not valid</message>
-                                    <ignoreModuleDependencies>true</ignoreModuleDependencies>
-                                </reactorModuleConvergence>
-
-                                <!--
-                                    This rule checks the dependencies and fails if any snapshots are found
-                                    in a release build.
-                                -->
-                                <requireReleaseDeps>
-                                    <onlyWhenRelease>true</onlyWhenRelease>
-                                    <message>No Snapshots Allowed when building a release!</message>
-                                </requireReleaseDeps>
-                            </rules>
-                            <fail>true</fail>
-                        </configuration>
-                    </execution>
-                </executions>
-            </plugin>
-            <plugin>
-                <groupId>com.lewisd</groupId>
-                <artifactId>lint-maven-plugin</artifactId>
-                <version>0.0.8</version>
-                <executions>
-                    <execution>
-                        <id>pom-lint</id>
-                        <phase>validate</phase>
-                        <configuration>
-                            <failOnViolation>false</failOnViolation>
-                            <onlyRunRules>
-                                <!--
-                                    We need to specify the rules to be able to not to run ExecutionId as the plugin insists
-                                    on analyzing the psring boot parent that do no specify ids on its executions
-                                -->
-                                <rule>DotVersionProperty</rule>
-                                <rule>VersionProp</rule>
-                                <rule>GAVOrder</rule>
-                                <rule>RedundantDepVersion</rule>
-                                <rule>RedundantPluginVersion</rule>
-                                <rule>ProfileOnlyAddModules</rule>
-                                <rule>DuplicateDep</rule>
-                                <rule>OSSDevelopersSectionRule</rule>
-                                <rule>OSSInceptionYearRule</rule>
-                                <rule>OSSIssueManagementSectionRule</rule>
-                                <rule>OSSLicenseSectionRule</rule>
-                                <rule>OSSUrlSectionRule</rule>
-                            </onlyRunRules>
-                            <xmlOutputFile>${project.build.directory}/maven-lint-result.xml</xmlOutputFile>
-                        </configuration>
-                        <goals>
-                            <goal>check</goal>
-                        </goals>
-                    </execution>
-                </executions>
-            </plugin>
-            <plugin>
-                <groupId>com.mycila</groupId>
-                <artifactId>license-maven-plugin</artifactId>
-                <version>3.0</version>
-                <dependencies>
-                    <dependency>
-                        <groupId>com.mulesoft.license</groupId>
-                        <artifactId>license</artifactId>
-                        <version>1.0.3</version>
-                    </dependency>
-                </dependencies>
+                <artifactId>maven-failsafe-plugin</artifactId>
+                <version>2.18.1</version>
                 <configuration>
-                    <header>LICENSE_HEADER.txt</header>
-                    <properties>
-                        <owner>MuleSoft, Inc</owner>
-                        <project.url>http://www.mulesoft.com</project.url>
-                        <year>2017</year>
-                    </properties>
+                    <!-- For integration with sonar -->
+                    <argLine>${failsafe.argLine}</argLine>
+                    <reuseForks>false</reuseForks>
+                    <testSourceDirectory>src/it/java</testSourceDirectory>
                     <includes>
-                        <include>**/*.java</include>
+                        <include>**/*ItCase.java</include>
                     </includes>
-                    <mapping>
-                        <java>SLASHSTAR_STYLE</java>
-                    </mapping>
+                    <excludes>
+                        <exclude>**/*Test.java</exclude>
+                    </excludes>
                 </configuration>
-                <executions>
-                    <execution>
-                        <id>license_check</id>
-                        <phase>compile</phase>
-                        <goals>
-                            <goal>check</goal>
-                        </goals>
-                    </execution>
-                </executions>
             </plugin>
         </plugins>
 
@@ -221,10 +124,11 @@
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-surefire-plugin</artifactId>
-                    <version>2.18.1</version>
+                    <!-- version provided by Spring Boot -->
                     <configuration>
-                        <argLine>-XX:+TieredCompilation -XX:TieredStopAtLevel=1 -Xmx2048m -XX:MaxPermSize=256m</argLine>
-                        <reuseForks>true</reuseForks>
+                        <!-- For integration with sonar -->
+                        <argLine>${surefire.argLine}</argLine>
+                        <reuseForks>false</reuseForks>
                         <includes>
                             <include>**/*Test.java</include>
                         </includes>
@@ -252,8 +156,26 @@
                         <label>Dependency Graph for ${project.name}</label>
                     </configuration>
                 </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-compiler-plugin</artifactId>
+                    <configuration>
+                        <source>1.8</source>
+                        <target>1.8</target>
+                    </configuration>
+
+                </plugin>
             </plugins>
         </pluginManagement>
+
+        <testResources>
+            <testResource>
+                <directory>src/test/resources</directory>
+            </testResource>
+            <testResource>
+                <directory>src/it/resources</directory>
+            </testResource>
+        </testResources>
     </build>
 
     <dependencies>
@@ -392,148 +314,151 @@
     </dependencies>
 
     <profiles>
-        <profile>
-            <id>it</id>
-            <build>
-                <testResources>
-                    <testResource>
-                        <directory>src/test/resources</directory>
-                    </testResource>
-                    <testResource>
-                        <directory>src/it/resources</directory>
-                    </testResource>
-                </testResources>
-                <plugins>
-                    <!-- Check the depdencies, we cannot do this in the default profile as the IT code is not
-                         analyzed and that causes some false positives -->
-                    <plugin>
-                        <groupId>org.apache.maven.plugins</groupId>
-                        <artifactId>maven-dependency-plugin</artifactId>
-                        <version>3.0.1</version>
-                        <executions>
-                            <execution>
-                                <id>analyze</id>
-                                <goals>
-                                    <goal>analyze-only</goal>
-                                </goals>
-                                <configuration>
-                                    <failOnWarning>true</failOnWarning>
 
-                                    <!-- both "used but undeclared" and "declared but unused" -->
-                                    <ignoredDependencies>
-                                        <ignoredDependency>org.springframework*::</ignoredDependency>
-                                        <!-- starters are false positives by nature -->
-                                        <ignoredDependency>:*starter:</ignoredDependency>
-                                        <!-- this pluglin seems to struggle to find usage of this in aws sdk -->
-                                        <ignoredDependency>org.slf4j:jcl-over-slf4j:</ignoredDependency>
-                                        <!-- found with retrospection -->
-                                        <ignoredDependency>com.fasterxml.jackson.datatype:jackson-datatype-jdk8:
-                                        </ignoredDependency>
-                                        <!-- spring boot managed -->
-                                        <ignoredDependency>org.apache.tomcat.embed:tomcat-embed-core:</ignoredDependency>
-                                        <!-- Used through IoC and Spring -->
-                                        <ignoredDependency>com.mulesoft.anypointmq:anypointmq-provider-generic:
-                                        </ignoredDependency>
-                                        <!-- Used through IoC and Spring -->
-                                        <ignoredDependency>com.mulesoft.anypointmq:anypointmq-provider-amazon:</ignoredDependency>
-                                        <!-- Used through IoC and Spring -->
-                                        <ignoredDependency>com.mulesoft.anypointmq:anypointmq-integration-analytics
-                                        </ignoredDependency>
-                                        <!-- Grizzly is extremely fragile and we do not want to mess with its classpath -->
-                                        <ignoredDependency>org.glassfish.grizzly::</ignoredDependency>
-                                        <!-- Grizzly is extremely fragile and we do not want to mess with its classpath -->
-                                        <ignoredDependency>com.ning:async-http-client:</ignoredDependency>
-                                        <!-- sonar dependency not used for compile -->
-                                        <ignoredDependency>org.sonarsource.scanner.maven:sonar-maven-plugin:jar:</ignoredDependency>
-                                        <ignoreNonCompile>true</ignoreNonCompile>
-                                    </ignoredDependencies>
-                                </configuration>
-                            </execution>
-                        </executions>
-                    </plugin>
+        <profile>
+            <id>lint</id>
+            <activation>
+                <property>
+                    <name>!skipLint</name>
+                </property>
+            </activation>
+            <build>
+                <plugins>
                     <plugin>
-                        <groupId>org.codehaus.mojo</groupId>
-                        <artifactId>build-helper-maven-plugin</artifactId>
-                        <version>1.9.1</version>
-                        <executions>
-                            <execution>
-                                <id>add-test-source</id>
-                                <phase>generate-test-sources</phase>
-                                <goals>
-                                    <goal>add-test-source</goal>
-                                </goals>
-                                <configuration>
-                                    <sources>
-                                        <source>src/it/java</source>
-                                    </sources>
-                                </configuration>
-                            </execution>
-                        </executions>
-                    </plugin>
-                    <plugin>
-                        <groupId>org.apache.maven.plugins</groupId>
-                        <artifactId>maven-failsafe-plugin</artifactId>
-                        <version>2.18.1</version>
+                        <groupId>com.mycila</groupId>
+                        <artifactId>license-maven-plugin</artifactId>
+                        <version>2.8</version>
+                        <dependencies>
+                            <dependency>
+                                <groupId>com.mulesoft.license</groupId>
+                                <artifactId>license</artifactId>
+                                <version>1.0.2</version>
+                            </dependency>
+                        </dependencies>
                         <configuration>
-                            <reuseForks>true</reuseForks>
-                            <argLine>-XX:+TieredCompilation -XX:TieredStopAtLevel=1 -Xmx2048m -XX:MaxPermSize=256m</argLine>
+                            <header>LICENSE_HEADER.txt</header>
+                            <properties>
+                                <owner>MuleSoft, Inc</owner>
+                                <project.url>http://www.mulesoft.com</project.url>
+                            </properties>
                             <includes>
-                                <include>**/*ItCase.java</include>
+                                <include>**/*.java</include>
                             </includes>
-                            <excludes>
-                                <exclude>**/*Test.java</exclude>
-                            </excludes>
+                            <mapping>
+                                <java>SLASHSTAR_STYLE</java>
+                            </mapping>
                         </configuration>
                         <executions>
                             <execution>
-                                <id>integration-test</id>
+                                <id>license_check</id>
+                                <phase>compile</phase>
                                 <goals>
-                                    <goal>integration-test</goal>
-                                </goals>
-                            </execution>
-                            <execution>
-                                <id>verify</id>
-                                <goals>
-                                    <goal>verify</goal>
+                                    <goal>check</goal>
                                 </goals>
                             </execution>
                         </executions>
                     </plugin>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-enforcer-plugin</artifactId>
+                        <version>3.0.0-M1</version>
+                        <executions>
+                            <execution>
+                                <id>enforce-banned-dependencies</id>
+                                <goals>
+                                    <goal>enforce</goal>
+                                </goals>
+                                <configuration>
+                                    <rules>
+                                        <bannedDependencies>
+                                            <excludes>
+                                                <exclude>org.apache.logging.log4j:log4j-slf4j-impl</exclude>
+                                            </excludes>
+                                        </bannedDependencies>
+                                        <requireReleaseDeps>
+                                            <onlyWhenRelease>true</onlyWhenRelease>
+                                            <message>No Snapshots Allowed when building a release!</message>
+                                        </requireReleaseDeps>
+                                        <!--dependencyConvergence/-->
+                                        <reactorModuleConvergence>
+                                            <message>The reactor is not valid</message>
+                                            <ignoreModuleDependencies>true</ignoreModuleDependencies>
+                                        </reactorModuleConvergence>
+                                    </rules>
+                                    <fail>true</fail>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+                    <plugin>
+                        <groupId>com.lewisd</groupId>
+                        <artifactId>lint-maven-plugin</artifactId>
+                        <version>0.0.11</version>
+                        <executions>
+                            <execution>
+                                <id>pom-lint</id>
+                                <phase>validate</phase>
+                                <goals>
+                                    <goal>check</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+
+        <profile>
+            <id>sonar</id>
+            <properties>
+                <!--
+                    This property is used to use only once single aggregated jacoco file for all the reactor.
+                 -->
+                <sonar.jacoco.reportPath>${maven.multiModuleProjectDirectory}/target/jacoco.exec</sonar.jacoco.reportPath>
+            </properties>
+            <build>
+                <plugins>
                     <plugin>
                         <groupId>org.jacoco</groupId>
                         <artifactId>jacoco-maven-plugin</artifactId>
                         <version>0.7.9</version>
+                        <configuration>
+                            <append>true</append>
+                            <destFile>${sonar.jacoco.reportPath}</destFile>
+                        </configuration>
                         <executions>
                             <execution>
-                                <id>prepare-agent</id>
+                                <id>pre-unit-test</id>
+                                <phase>initialize</phase>
                                 <goals>
                                     <goal>prepare-agent</goal>
                                 </goals>
+                                <configuration>
+                                    <propertyName>surefire.argLine</propertyName>
+                                </configuration>
                             </execution>
                             <execution>
-                                <id>report</id>
-                                <phase>prepare-package</phase>
+                                <id>pre-integration-test</id>
+                                <phase>pre-integration-test</phase>
                                 <goals>
-                                    <goal>report</goal>
-                                </goals>
-                            </execution>
-                            <execution>
-                                <id>post-unit-test</id>
-                                <phase>test</phase>
-                                <goals>
-                                    <goal>report</goal>
+                                    <goal>prepare-agent</goal>
                                 </goals>
                                 <configuration>
-                                    <!-- Sets the path to the file which contains the execution data. -->
-
-                                    <dataFile>target/jacoco.exec</dataFile>
-                                    <!-- Sets the output directory for the code coverage report. -->
-                                    <outputDirectory>target/jacoco-ut</outputDirectory>
+                                    <propertyName>failsafe.argLine</propertyName>
                                 </configuration>
                             </execution>
                         </executions>
                     </plugin>
                 </plugins>
+                <pluginManagement>
+                    <plugins>
+                        <plugin>
+                            <groupId>org.sonarsource.scanner.maven</groupId>
+                            <artifactId>sonar-maven-plugin</artifactId>
+                            <version>3.3.0.603</version>
+                        </plugin>
+                    </plugins>
+                </pluginManagement>
             </build>
         </profile>
     </profiles>
@@ -553,6 +478,11 @@
     </distributionManagement>
 
     <pluginRepositories>
+        <pluginRepository>
+            <id>mule-releases</id>
+            <name>MuleSoft internal repository</name>
+            <url>https://repository-master.mulesoft.org/nexus/content/repositories/private</url>
+        </pluginRepository>
         <pluginRepository>
             <id>mule-ee-releases</id>
             <name>Anypoint MQ Release Repository</name>
