@@ -5,16 +5,11 @@
  */
 package com.mulesoft.integration.springboot.client.action;
 
-
-import com.github.tomakehurst.wiremock.junit.WireMockRule;
 import com.mulesoft.runtime.services.analytics.integration.model.MetricsIngestItem;
-
-import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.boot.test.web.client.TestRestTemplate;
 
 import org.springframework.http.*;
 import org.springframework.test.context.ContextConfiguration;
@@ -31,17 +26,10 @@ import java.util.List;
 @RunWith(SpringRunner.class)
 @ContextConfiguration
 @TestPropertySource("classpath:application-test.properties")
-public class AnalyticsIngestTest {
-
-    private TestRestTemplate restTemplate = new TestRestTemplate();
-
-    @Rule
-    public WireMockRule wireMockRule = new WireMockRule(8090);
+public class AnalyticsIngestTest extends BaseTest {
 
     @Value("${analytics.test.ingest.url}")
     private String analyticsIngestUrl;
-
-    HttpHeaders headers = new HttpHeaders();
 
     @Test
     public void testIngestQuery() {
@@ -55,13 +43,10 @@ public class AnalyticsIngestTest {
 
         HttpEntity<List<MetricsIngestItem>> entity = new HttpEntity<>(Arrays.asList(ingestItem), headers);
 
-        ResponseEntity<String> response = this.restTemplate.exchange(createUrl("v2/analytics/topics/usage-tracking-objectstore"),
+        ResponseEntity<String> response = restTemplate.exchange(createUrl(analyticsIngestUrl, "v2/analytics/topics/usage-tracking-objectstore"),
                 HttpMethod.POST, entity, String.class);
 
         assertEquals(HttpStatus.ACCEPTED, response.getStatusCode());
     }
 
-    private String createUrl(String uri) {
-        return analyticsIngestUrl + ":" + wireMockRule.port() + uri;
-    }
 }

@@ -5,13 +5,9 @@
  */
 package com.mulesoft.integration.springboot.client.action;
 
-
-import com.github.tomakehurst.wiremock.junit.WireMockRule;
-import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.http.*;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.TestPropertySource;
@@ -24,17 +20,10 @@ import static org.junit.Assert.assertEquals;
 @RunWith(SpringRunner.class)
 @ContextConfiguration
 @TestPropertySource("classpath:application-test.properties")
-public class AnalyticsQueryTest {
+public class AnalyticsQueryTest extends BaseTest {
 
     @Value("${analytics.test.query.url}")
     private String analyticsQueryUrl;
-
-    private TestRestTemplate restTemplate = new TestRestTemplate();
-
-    @Rule
-    public WireMockRule wireMockRule = new WireMockRule(8090);
-
-    HttpHeaders headers = new HttpHeaders();
 
     @Test
     public void testAnalyticsQuery() {
@@ -43,7 +32,7 @@ public class AnalyticsQueryTest {
                 .withQueryParam("end_date", containing("2017-10-26T00:00:00")).willReturn(aResponse().
                 withHeader("Content-Type", "text/json").withStatus(200).withBody("{}")));
 
-        UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(createURL("/events/1.0/c3a49b88-6143-4f71-a586-d54ad345da3e/1day"))
+        UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(createUrl(analyticsQueryUrl, "/events/1.0/c3a49b88-6143-4f71-a586-d54ad345da3e/1day"))
                 .queryParam("start_date", "2017-10-01T00:00:00")
                 .queryParam("end_date", "2017-10-26T00:00:00");
 
@@ -62,7 +51,7 @@ public class AnalyticsQueryTest {
                 .withQueryParam("end_date", containing("2017-10-26T00:00:00")).willReturn(aResponse().
                         withHeader("Content-Type", "text/json").withStatus(200).withBody("{}")));
 
-        UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(createURL("/events/analytics/1.0/c3a49b88-6143-4f71-a586-d54ad345da3e/1day"))
+        UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(createUrl(analyticsQueryUrl, "/events/analytics/1.0/c3a49b88-6143-4f71-a586-d54ad345da3e/1day"))
                 .queryParam("start_date", "2017-10-01T00:00:00")
                 .queryParam("end_date", "2017-10-26T00:00:00");
 
@@ -81,7 +70,7 @@ public class AnalyticsQueryTest {
                     .withQueryParam("end", containing("2017-10-26T00:00:00")).willReturn(aResponse().
                             withStatus(400)));
 
-            UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(createURL("/events/1.0/c3a49b88-6143-4f71-a586-d54ad345da3e/1day"))
+            UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(createUrl(analyticsQueryUrl, "/events/1.0/c3a49b88-6143-4f71-a586-d54ad345da3e/1day"))
                     .queryParam("start_date", "2017-10-01T00:00:00")
                     .queryParam("end", "2017-10-26T00:00:00");
 
@@ -93,7 +82,4 @@ public class AnalyticsQueryTest {
             assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
         }
 
-    private String createURL(String uri) {
-        return analyticsQueryUrl + ":" + wireMockRule.port() + uri;
-    }
 }
