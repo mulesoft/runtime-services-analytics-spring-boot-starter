@@ -49,7 +49,7 @@ pipeline {
          */
         stage('Build') {
             steps {
-                mavenBuild "clean install -DskipTests"
+                mavenBuild "clean install -DskipTests clm:evaluate"
             }
         }
 
@@ -89,7 +89,8 @@ def mavenBuild(String extraArguments) {
          */
         sh "docker login -u '$DEVDOCKER_USR' -p \'$DEVDOCKER_PSW\' 'https://devdocker.mulesoft.com:18078'"
         sh "docker login -u '$QUAY_USR' -p \'$QUAY_PSW\' 'https://quay.build.msap.io'"
-        sh 'mvn -s $MAVEN_GLOBAL_SETINGS_FILE -U -Psonar -Drelease=' + ' -Danypoint.http.default.timeout=60000 ' + extraArguments
+        sh 'mvn -s $MAVEN_GLOBAL_SETINGS_FILE -U -Dclm.applicationId=anypointmq-runtime-analytics ' +
+                '-Psonar -Drelease=' + ' -Danypoint.http.default.timeout=60000 ' + extraArguments
         sh "docker logout " + 'https://devdocker.mulesoft.com:18078'
         sh "docker logout " + 'https://quay.build.msap.io'
     }
