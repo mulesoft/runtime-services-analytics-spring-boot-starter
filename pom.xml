@@ -6,70 +6,9 @@
 
     <groupId>com.mulesoft.runtime.services</groupId>
     <artifactId>runtime-services-analytics-spring-boot-starter</artifactId>
-    <version>1.0.2-SNAPSHOT</version>
+    <!-- Version will be handled by valkyr.yaml file via Git tags -->
+    <version>3.1.0-SNAPSHOT</version>
     <packaging>jar</packaging>
-
-    <inceptionYear>2076</inceptionYear>
-
-    <issueManagement>
-        <system>Jira</system>
-        <url>https://www.mulesoft.org/jira/browse/MQ</url>
-    </issueManagement>
-
-    <ciManagement>
-        <system>Jenkins</system>
-        <url>https://mulesoft-anypoint-mq.ci.cloudbees.com</url>
-    </ciManagement>
-
-    <scm>
-        <connection>scm:git:git://github.com/mulesoft/anypoint-mq.git</connection>
-        <developerConnection>scm:git:git@github.com:mulesoft/anypoint-mq.git</developerConnection>
-        <url>http://github.com/mulesoft/anypoint-mq</url>
-        <tag>HEAD</tag>
-    </scm>
-
-    <url>https://www.mulesoft.com/platform/anypoint-mq-message-queue</url>
-
-    <licenses>
-        <license>
-            <name>MuleSoft License</name>
-            <url>https://github.com/mulesoft/anypoint-mq/blob/master/LICENSE.md</url>
-            <distribution>repo</distribution>
-        </license>
-    </licenses>
-
-    <developers>
-        <developer>
-            <email>victor.romero@mulesoft.com</email>
-            <name>Victor Romero</name>
-            <url>https://github.com/vromero</url>
-            <id>vromero</id>
-        </developer>
-        <developer>
-            <email>federico.donnarumma@mulesoft.com</email>
-            <name>Federico Donnarumma</name>
-            <url>https://github.com/fededonna</url>
-            <id>fededonna</id>
-        </developer>
-        <developer>
-            <email>daniel.datri@mulesoft.com</email>
-            <name>Daniel Datri</name>
-            <url>https://github.com/danieldatri</url>
-            <id>danieldatri</id>
-        </developer>
-        <developer>
-            <email>kapil.duraphe@mulesoft.com</email>
-            <name>Kapil Duraphe</name>
-            <url>https://github.com/kapilduraphe</url>
-            <id>kapilduraphe</id>
-        </developer>
-        <developer>
-            <email>steven.butt@mulesoft.com</email>
-            <name>Steven Butt</name>
-            <url>https://github.com/stevecluster</url>
-            <id>stevecluster</id>
-        </developer>
-    </developers>
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -82,105 +21,6 @@
         <slf4j.version>1.7.25</slf4j.version>
         <springboot.version>1.5.15.RELEASE</springboot.version>
     </properties>
-
-    <build>
-        <plugins>
-            <plugin>
-                <groupId>org.codehaus.mojo</groupId>
-                <artifactId>build-helper-maven-plugin</artifactId>
-                <version>3.0.0</version>
-                <executions>
-                    <execution>
-                        <id>add-test-source</id>
-                        <phase>generate-test-sources</phase>
-                        <goals>
-                            <goal>add-test-source</goal>
-                        </goals>
-                        <configuration>
-                            <sources>
-                                <source>src/it/java</source>
-                            </sources>
-                        </configuration>
-                    </execution>
-                </executions>
-            </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-failsafe-plugin</artifactId>
-                <version>2.18.1</version>
-                <configuration>
-                    <!-- For integration with sonar -->
-                    <argLine>${failsafe.argLine}</argLine>
-                    <reuseForks>false</reuseForks>
-                    <testSourceDirectory>src/it/java</testSourceDirectory>
-                    <includes>
-                        <include>**/*ItCase.java</include>
-                    </includes>
-                    <excludes>
-                        <exclude>**/*Test.java</exclude>
-                    </excludes>
-                </configuration>
-            </plugin>
-        </plugins>
-
-        <pluginManagement>
-            <plugins>
-                <plugin>
-                    <groupId>org.apache.maven.plugins</groupId>
-                    <artifactId>maven-surefire-plugin</artifactId>
-                    <!-- version provided by Spring Boot -->
-                    <configuration>
-                        <!-- For integration with sonar -->
-                        <argLine>${surefire.argLine}</argLine>
-                        <reuseForks>false</reuseForks>
-                        <includes>
-                            <include>**/*Test.java</include>
-                        </includes>
-                        <excludes>
-                            <exclude>**/*ItCase.java</exclude>
-                        </excludes>
-                    </configuration>
-                </plugin>
-
-                <!--
-				Maven Graph Plugin -
-				http://mvnplugins.fusesource.org/maven/1.10/maven-graph-plugin/
-				Generate a dependency graph using "mvn graph:reactor"
-				-->
-                <plugin>
-                    <groupId>org.fusesource.mvnplugins</groupId>
-                    <artifactId>maven-graph-plugin</artifactId>
-                    <version>1.39</version>
-                    <configuration>
-                        <hideScopes>provided,runtime,system,test</hideScopes>
-                        <hideVersion>true</hideVersion>
-                        <hideGroupId>true</hideGroupId>
-                        <hideScopes>test,test-jar</hideScopes>
-                        <hidePoms>true</hidePoms>
-                        <label>Dependency Graph for ${project.name}</label>
-                    </configuration>
-                </plugin>
-                <plugin>
-                    <groupId>org.apache.maven.plugins</groupId>
-                    <artifactId>maven-compiler-plugin</artifactId>
-                    <configuration>
-                        <source>1.8</source>
-                        <target>1.8</target>
-                    </configuration>
-
-                </plugin>
-            </plugins>
-        </pluginManagement>
-
-        <testResources>
-            <testResource>
-                <directory>src/test/resources</directory>
-            </testResource>
-            <testResource>
-                <directory>src/it/resources</directory>
-            </testResource>
-        </testResources>
-    </build>
 
     <dependencies>
         <dependency>
@@ -304,8 +144,8 @@
             <version>1.58</version>
             <exclusions>
                 <exclusion>
-                <groupId>commons-logging</groupId>
-                <artifactId>commons-logging</artifactId>
+                    <groupId>commons-logging</groupId>
+                    <artifactId>commons-logging</artifactId>
                 </exclusion>
             </exclusions>
             <scope>test</scope>
@@ -317,8 +157,106 @@
         </dependency>
     </dependencies>
 
-    <profiles>
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>build-helper-maven-plugin</artifactId>
+                <version>3.0.0</version>
+                <executions>
+                    <execution>
+                        <id>add-test-source</id>
+                        <phase>generate-test-sources</phase>
+                        <goals>
+                            <goal>add-test-source</goal>
+                        </goals>
+                        <configuration>
+                            <sources>
+                                <source>src/it/java</source>
+                            </sources>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-failsafe-plugin</artifactId>
+                <version>2.18.1</version>
+                <configuration>
+                    <!-- For integration with sonar -->
+                    <argLine>${failsafe.argLine}</argLine>
+                    <reuseForks>false</reuseForks>
+                    <testSourceDirectory>src/it/java</testSourceDirectory>
+                    <includes>
+                        <include>**/*ItCase.java</include>
+                    </includes>
+                    <excludes>
+                        <exclude>**/*Test.java</exclude>
+                    </excludes>
+                </configuration>
+            </plugin>
+        </plugins>
 
+        <pluginManagement>
+            <plugins>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-surefire-plugin</artifactId>
+                    <!-- version provided by Spring Boot -->
+                    <configuration>
+                        <!-- For integration with sonar -->
+                        <argLine>${surefire.argLine}</argLine>
+                        <reuseForks>false</reuseForks>
+                        <includes>
+                            <include>**/*Test.java</include>
+                        </includes>
+                        <excludes>
+                            <exclude>**/*ItCase.java</exclude>
+                        </excludes>
+                    </configuration>
+                </plugin>
+
+                <!--
+				Maven Graph Plugin -
+				http://mvnplugins.fusesource.org/maven/1.10/maven-graph-plugin/
+				Generate a dependency graph using "mvn graph:reactor"
+				-->
+                <plugin>
+                    <groupId>org.fusesource.mvnplugins</groupId>
+                    <artifactId>maven-graph-plugin</artifactId>
+                    <version>1.39</version>
+                    <configuration>
+                        <hideScopes>provided,runtime,system,test</hideScopes>
+                        <hideVersion>true</hideVersion>
+                        <hideGroupId>true</hideGroupId>
+                        <hideScopes>test,test-jar</hideScopes>
+                        <hidePoms>true</hidePoms>
+                        <label>Dependency Graph for ${project.name}</label>
+                    </configuration>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-compiler-plugin</artifactId>
+                    <configuration>
+                        <source>1.8</source>
+                        <target>1.8</target>
+                    </configuration>
+
+                </plugin>
+            </plugins>
+        </pluginManagement>
+
+        <testResources>
+            <testResource>
+                <directory>src/test/resources</directory>
+            </testResource>
+            <testResource>
+                <directory>src/it/resources</directory>
+            </testResource>
+        </testResources>
+    </build>
+
+    <profiles>
         <profile>
             <id>lint</id>
             <activation>
@@ -411,60 +349,6 @@
                 </plugins>
             </build>
         </profile>
-
-        <profile>
-            <id>sonar</id>
-            <properties>
-                <!--
-                    This property is used to use only once single aggregated jacoco file for all the reactor.
-                 -->
-                <sonar.jacoco.reportPath>${maven.multiModuleProjectDirectory}/target/jacoco.exec</sonar.jacoco.reportPath>
-            </properties>
-            <build>
-                <plugins>
-                    <plugin>
-                        <groupId>org.jacoco</groupId>
-                        <artifactId>jacoco-maven-plugin</artifactId>
-                        <version>0.7.9</version>
-                        <configuration>
-                            <append>true</append>
-                            <destFile>${sonar.jacoco.reportPath}</destFile>
-                        </configuration>
-                        <executions>
-                            <execution>
-                                <id>pre-unit-test</id>
-                                <phase>initialize</phase>
-                                <goals>
-                                    <goal>prepare-agent</goal>
-                                </goals>
-                                <configuration>
-                                    <propertyName>surefire.argLine</propertyName>
-                                </configuration>
-                            </execution>
-                            <execution>
-                                <id>pre-integration-test</id>
-                                <phase>pre-integration-test</phase>
-                                <goals>
-                                    <goal>prepare-agent</goal>
-                                </goals>
-                                <configuration>
-                                    <propertyName>failsafe.argLine</propertyName>
-                                </configuration>
-                            </execution>
-                        </executions>
-                    </plugin>
-                </plugins>
-                <pluginManagement>
-                    <plugins>
-                        <plugin>
-                            <groupId>org.sonarsource.scanner.maven</groupId>
-                            <artifactId>sonar-maven-plugin</artifactId>
-                            <version>3.3.0.603</version>
-                        </plugin>
-                    </plugins>
-                </pluginManagement>
-            </build>
-        </profile>
     </profiles>
 
     <distributionManagement>
@@ -523,4 +407,24 @@
             <url>https://repository-master.mulesoft.org/nexus/content/repositories/ci-snapshots</url>
         </repository>
     </repositories>
+
+    <licenses>
+        <license>
+            <name>MuleSoft License</name>
+            <url>https://github.com/mulesoft/anypoint-mq/blob/master/LICENSE.md</url>
+            <distribution>repo</distribution>
+        </license>
+    </licenses>
+
+    <issueManagement>
+        <system>Jira</system>
+        <url>https://www.mulesoft.org/jira/browse/MQ</url>
+    </issueManagement>
+
+    <scm>
+        <connection>scm:git:git://github.com/mulesoft/anypoint-mq.git</connection>
+        <developerConnection>scm:git:git@github.com:mulesoft/anypoint-mq.git</developerConnection>
+        <url>http://github.com/mulesoft/anypoint-mq</url>
+        <tag>HEAD</tag>
+    </scm>
 </project>
