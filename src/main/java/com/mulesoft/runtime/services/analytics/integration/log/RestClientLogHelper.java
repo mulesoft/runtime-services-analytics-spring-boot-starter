@@ -12,7 +12,7 @@ package com.mulesoft.runtime.services.analytics.integration.log;
 
 import com.mulesoft.anypoint.httpclient.AnypointPlatformRequest;
 import com.mulesoft.anypoint.httpclient.AnypointPlatformResponse;
-import com.ning.http.client.Request;
+import org.asynchttpclient.Request;
 import org.slf4j.Logger;
 import org.springframework.util.StringUtils;
 
@@ -52,7 +52,7 @@ public class RestClientLogHelper {
             stringBuilder.append("HEADERS {");
             request.getHeaders().forEach((header) -> {
                 this.stringsAppend(stringBuilder, "'", header.getKey(), "'");
-                this.stringsAppend(stringBuilder, ",'", header.getValue().stream().findFirst().orElse(""), "'");
+                this.stringsAppend(stringBuilder, ",'", header.getValue(), "'");
             });
             stringBuilder.append("} ");
             if (!StringUtils.isEmpty(body)) {
