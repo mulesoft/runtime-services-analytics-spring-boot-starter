@@ -180,78 +180,72 @@
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-failsafe-plugin</artifactId>
-                <version>2.18.1</version>
+                <artifactId>maven-compiler-plugin</artifactId>
                 <configuration>
-                    <!-- For integration with sonar -->
-                    <argLine>${failsafe.argLine}</argLine>
-                    <reuseForks>false</reuseForks>
-                    <testSourceDirectory>src/it/java</testSourceDirectory>
-                    <includes>
-                        <include>**/*ItCase.java</include>
-                    </includes>
-                    <excludes>
-                        <exclude>**/*Test.java</exclude>
-                    </excludes>
+                    <source>1.8</source>
+                    <target>1.8</target>
                 </configuration>
             </plugin>
+            <plugin>
+                <groupId>org.jacoco</groupId>
+                <artifactId>jacoco-maven-plugin</artifactId>
+                <version>0.8.5</version>
+                <configuration>
+                    <append>true</append>
+                </configuration>
+                <executions>
+                    <execution>
+                        <id>pre-unit-test</id>
+                        <goals>
+                            <goal>prepare-agent</goal>
+                        </goals>
+                        <configuration>
+                            <destFile>${project.basedir}/target/jacoco-ut.exec</destFile>
+                            <append>true</append>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>post-unit-test</id>
+                        <phase>test</phase>
+                        <goals>
+                            <goal>report</goal>
+                        </goals>
+                        <configuration>
+                            <dataFile>${project.basedir}/target/jacoco-ut.exec</dataFile>
+                            <outputDirectory>${project.reporting.outputDirectory}/jacoco-ut</outputDirectory>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>pre-integration-test</id>
+                        <phase>pre-integration-test</phase>
+                        <goals>
+                            <!-- Could also use `prepare-agent-integration`, but trying manually I didn't find a difference -->
+                            <goal>prepare-agent</goal>
+                        </goals>
+                        <configuration>
+                            <destFile>${project.basedir}/target/jacoco-it.exec</destFile>
+                            <append>true</append>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>post-integration-test</id>
+                        <phase>post-integration-test</phase>
+                        <goals>
+                            <!-- Could also use `report-integration`, but trying manually I didn't find a difference -->
+                            <goal>report</goal>
+                        </goals>
+                        <configuration>
+                            <dataFile>${project.basedir}/target/jacoco-it.exec</dataFile>
+                            <outputDirectory>${project.reporting.outputDirectory}/jacoco-it</outputDirectory>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
         </plugins>
-
-        <pluginManagement>
-            <plugins>
-                <plugin>
-                    <groupId>org.apache.maven.plugins</groupId>
-                    <artifactId>maven-surefire-plugin</artifactId>
-                    <!-- version provided by Spring Boot -->
-                    <configuration>
-                        <!-- For integration with sonar -->
-                        <argLine>${surefire.argLine}</argLine>
-                        <reuseForks>false</reuseForks>
-                        <includes>
-                            <include>**/*Test.java</include>
-                        </includes>
-                        <excludes>
-                            <exclude>**/*ItCase.java</exclude>
-                        </excludes>
-                    </configuration>
-                </plugin>
-
-                <!--
-				Maven Graph Plugin -
-				http://mvnplugins.fusesource.org/maven/1.10/maven-graph-plugin/
-				Generate a dependency graph using "mvn graph:reactor"
-				-->
-                <plugin>
-                    <groupId>org.fusesource.mvnplugins</groupId>
-                    <artifactId>maven-graph-plugin</artifactId>
-                    <version>1.39</version>
-                    <configuration>
-                        <hideScopes>provided,runtime,system,test</hideScopes>
-                        <hideVersion>true</hideVersion>
-                        <hideGroupId>true</hideGroupId>
-                        <hideScopes>test,test-jar</hideScopes>
-                        <hidePoms>true</hidePoms>
-                        <label>Dependency Graph for ${project.name}</label>
-                    </configuration>
-                </plugin>
-                <plugin>
-                    <groupId>org.apache.maven.plugins</groupId>
-                    <artifactId>maven-compiler-plugin</artifactId>
-                    <configuration>
-                        <source>1.8</source>
-                        <target>1.8</target>
-                    </configuration>
-
-                </plugin>
-            </plugins>
-        </pluginManagement>
 
         <testResources>
             <testResource>
                 <directory>src/test/resources</directory>
-            </testResource>
-            <testResource>
-                <directory>src/it/resources</directory>
             </testResource>
         </testResources>
     </build>
