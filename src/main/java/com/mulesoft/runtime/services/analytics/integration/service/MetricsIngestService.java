@@ -41,7 +41,6 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.atomic.LongAdder;
 import java.util.stream.Collectors;
 
-@Named
 public class MetricsIngestService {
 
     private static final long CACHE_SIZE = 16384;
