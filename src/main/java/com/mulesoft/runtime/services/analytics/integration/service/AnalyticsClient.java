@@ -16,7 +16,6 @@ import javax.inject.Named;
 import java.time.OffsetDateTime;
 import java.util.List;
 
-@Named
 public class AnalyticsClient {
 
     private AnalyticsQueryClient queryClient;

@@ -19,7 +19,6 @@ import rx.Observable;
 import javax.inject.Inject;
 import javax.inject.Named;
 
-@Named
 public class AnalyticsIngestClient {
 
     private static final String EMPTY_BODY = "";

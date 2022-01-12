@@ -17,7 +17,6 @@ import javax.inject.Inject;
 import javax.inject.Named;
 import java.util.concurrent.Executors;
 
-@Named
 public class SegmentNotificationSubscriber extends AbstractNotificationSubscriber {
 
 
