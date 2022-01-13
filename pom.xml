@@ -19,7 +19,7 @@
         <jackson.version>2.9.6</jackson.version>
         <segmentanalytics.version>2.1.1</segmentanalytics.version>
         <slf4j.version>1.7.25</slf4j.version>
-        <springboot.version>1.5.22.RELEASE</springboot.version>
+        <springboot.version>2.0.0.RELEASE</springboot.version>
     </properties>
 
     <dependencies>
