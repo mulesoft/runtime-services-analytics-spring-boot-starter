@@ -20,6 +20,7 @@
         <segmentanalytics.version>2.1.1</segmentanalytics.version>
         <slf4j.version>1.7.25</slf4j.version>
         <springboot.version>1.5.22.RELEASE</springboot.version>
+        <runtime.services.newrelic.integration.version>1.0.5</runtime.services.newrelic.integration.version>
     </properties>
 
     <dependencies>
@@ -154,6 +155,11 @@
             <groupId>org.sonarsource.scanner.maven</groupId>
             <artifactId>sonar-maven-plugin</artifactId>
             <version>3.2</version>
+        </dependency>
+        <dependency>
+            <groupId>com.mulesoft.runtime.services</groupId>
+            <artifactId>runtime-services-newrelic-integration</artifactId>
+            <version>1.0.5</version>
         </dependency>
     </dependencies>
 
@@ -345,6 +351,15 @@
         </profile>
     </profiles>
 
+    <pluginRepositories>
+        <pluginRepository>
+            <id>mule-releases</id>
+            <name>MuleSoft internal repository</name>
+            <url>https://repository-master.mulesoft.org/nexus/content/repositories/private</url>
+        </pluginRepository>
+    </pluginRepositories>
+
+
     <distributionManagement>
         <repository>
             <id>build-releases</id>
@@ -359,46 +374,16 @@
         </snapshotRepository>
     </distributionManagement>
 
-    <pluginRepositories>
-        <pluginRepository>
-            <id>mule-releases</id>
-            <name>MuleSoft internal repository</name>
-            <url>https://repository-master.mulesoft.org/nexus/content/repositories/private</url>
-        </pluginRepository>
-        <pluginRepository>
-            <id>mule-ee-releases</id>
-            <name>Anypoint MQ Release Repository</name>
-            <url>https://repository-master.mulesoft.org/nexus/content/repositories/ci-releases</url>
-            <releases>
-                <enabled>true</enabled>
-            </releases>
-            <snapshots>
-                <enabled>false</enabled>
-            </snapshots>
-        </pluginRepository>
-        <pluginRepository>
-            <id>mule-ee-snapshots</id>
-            <name>Anypoint MQ Snapshot Repository</name>
-            <url>https://repository-master.mulesoft.org/nexus/content/repositories/ci-snapshots</url>
-            <releases>
-                <enabled>false</enabled>
-            </releases>
-            <snapshots>
-                <enabled>true</enabled>
-            </snapshots>
-        </pluginRepository>
-    </pluginRepositories>
-
     <repositories>
         <repository>
-            <id>mule-ee-releases</id>
-            <name>MuleSoft Release Repository</name>
-            <url>https://repository-master.mulesoft.org/nexus/content/repositories/ci-releases</url>
+            <id>build-releases</id>
+            <name>Releases Repository</name>
+            <url>https://nexus.build.msap.io/nexus/content/repositories/releases</url>
         </repository>
         <repository>
-            <id>mule-ee-snapshots</id>
-            <name>MuleSoft Snapshot Repository</name>
-            <url>https://repository-master.mulesoft.org/nexus/content/repositories/ci-snapshots</url>
+            <id>build-snapshots</id>
+            <name>Snapshots Repository</name>
+            <url>https://nexus.build.msap.io/nexus/content/repositories/snapshots</url>
         </repository>
     </repositories>
 

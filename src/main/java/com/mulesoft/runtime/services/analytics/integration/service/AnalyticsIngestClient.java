@@ -15,9 +15,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import rx.Observable;
-
 import javax.inject.Inject;
-import javax.inject.Named;
+import com.mulesoft.runtime.services.newrelic.NewRelicNotifier;
+
 
 public class AnalyticsIngestClient {
 
@@ -31,12 +31,15 @@ public class AnalyticsIngestClient {
 
     private final RestClientLogHelper logHelper;
 
+    private final NewRelicNotifier newRelicNotifier;
+
     @Inject
     public AnalyticsIngestClient(
-        @Value("${analytics.ingest.url}") String analyticsIngestUrl,
-        RestClient httpClient) {
+            @Value("${analytics.ingest.url}") String analyticsIngestUrl,
+            RestClient httpClient, NewRelicNotifier newRelicNotifier) {
         this.analyticsIngestUrl = analyticsIngestUrl;
         this.httpClient = httpClient;
+        this.newRelicNotifier = newRelicNotifier;
         logHelper = new RestClientLogHelper(logger);
     }
 
@@ -54,6 +57,7 @@ public class AnalyticsIngestClient {
         }).asObservable()
             .doOnError(throwable -> {
                 logger.warn("could not execute ingest request to analytics", throwable);
+                newRelicNotifier.recordMetricToNewrelic(NewRelicNotifier.ANALYTICS_INGESTION_ERROR, 1);
                 throw new MetricsIngestException("Could not execute ingest request to analytics", throwable);
             });
     }
