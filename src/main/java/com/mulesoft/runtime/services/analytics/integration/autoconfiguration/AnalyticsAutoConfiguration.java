@@ -15,6 +15,7 @@ import com.mulesoft.runtime.services.analytics.integration.service.AnalyticsQuer
 import com.mulesoft.runtime.services.analytics.integration.service.MetricsIngestService;
 import com.mulesoft.runtime.services.analytics.integration.subscriber.AnalyticsNotificationSubscriber;
 import com.mulesoft.runtime.services.analytics.integration.subscriber.SegmentNotificationSubscriber;
+import com.mulesoft.runtime.services.newrelic.NewRelicNotifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
@@ -64,8 +65,8 @@ public class AnalyticsAutoConfiguration {
 
     @Bean
     @ConditionalOnProperty(value = "analytics.subscription.enabled", havingValue = "true", matchIfMissing = true)
-    public AnalyticsIngestClient analyticsIngestClient(@Value("${analytics.ingest.url}") String analyticsIngestUrl, RestClient restClient) {
-        return new AnalyticsIngestClient(analyticsIngestUrl, restClient);
+    public AnalyticsIngestClient analyticsIngestClient(@Value("${analytics.ingest.url}") String analyticsIngestUrl, RestClient restClient, NewRelicNotifier newRelicNotifier) {
+        return new AnalyticsIngestClient(analyticsIngestUrl, restClient, newRelicNotifier);
     }
 
 
