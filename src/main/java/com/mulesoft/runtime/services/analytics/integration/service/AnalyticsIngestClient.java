@@ -36,7 +36,8 @@ public class AnalyticsIngestClient {
     @Inject
     public AnalyticsIngestClient(
             @Value("${analytics.ingest.url}") String analyticsIngestUrl,
-            RestClient httpClient, NewRelicNotifier newRelicNotifier) {
+            RestClient httpClient,
+            NewRelicNotifier newRelicNotifier) {
         this.analyticsIngestUrl = analyticsIngestUrl;
         this.httpClient = httpClient;
         this.newRelicNotifier = newRelicNotifier;
