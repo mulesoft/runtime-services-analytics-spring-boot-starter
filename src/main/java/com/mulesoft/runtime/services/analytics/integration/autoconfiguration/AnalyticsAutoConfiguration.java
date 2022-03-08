@@ -81,7 +81,7 @@ public class AnalyticsAutoConfiguration {
     @ConditionalOnMissingBean(HttpClient.class)
     @ConditionalOnProperty(value = "analytics.subscription.enabled", havingValue = "true")
     public HttpClient objectStoreDefaultHttpClient(@Value("${http.client.insecure:false}") boolean insecure,
-                                                   @Value("${http.client.timeout:20000}") int timeout) {
+                                                   @Value("${http.client.timeout:60000}") int timeout) {
         return new HttpClient.Builder().setInsecure(insecure).setTimeout(timeout).build();
     }
 
