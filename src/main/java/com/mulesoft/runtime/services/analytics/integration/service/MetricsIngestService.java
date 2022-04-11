@@ -43,7 +43,7 @@ import java.util.stream.Collectors;
 
 public class MetricsIngestService {
 
-    private static final long CACHE_SIZE = 16384;
+    private static final long CACHE_SIZE = 2048;
 
     private static Analytics segment;
 
@@ -176,6 +176,10 @@ public class MetricsIngestService {
             counts.getByteCount().add(byteCount);
             if (logger.isDebugEnabled()) {
                 logger.debug("metrics updated for key {}, notificationCount {}, billableUnitCount {}, byteCount {}", key, count, billableUnitCount, byteCount);
+            }
+            if(metricsCache.size() >= CACHE_SIZE && getSecondsUntilNextFlush() > 0) {
+                flush();
+                updateNextFlushTime();
             }
         } catch (ExecutionException e) {
             logger.error("instance {} encountered an error while trying to update its metrics cache: {}", analyticsSenderId, e);
