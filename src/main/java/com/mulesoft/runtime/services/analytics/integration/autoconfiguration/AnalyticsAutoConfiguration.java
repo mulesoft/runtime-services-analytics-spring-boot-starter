@@ -47,8 +47,9 @@ public class AnalyticsAutoConfiguration {
                                                      @Value("${analytics.senderId}") String analyticsSenderId,
                                                      @Value("${analytics.ingest.granularity}") int granularity,
                                                      @Value("${analytics.ingest.period}") int period,
-                                                     @Value("${analytics.ingest.poolSize:8}") int poolSize) {
-        return new MetricsIngestService(anypointAnalyticsClient, writekey, analyticsSenderId, granularity, period, poolSize);
+                                                     @Value("${analytics.ingest.poolSize:8}") int poolSize,
+                                                     @Value("${analytics.ingest.cache.size:2048}") long cacheSize) {
+        return new MetricsIngestService(anypointAnalyticsClient, writekey, analyticsSenderId, granularity, period, poolSize, cacheSize);
     }
 
     @Bean

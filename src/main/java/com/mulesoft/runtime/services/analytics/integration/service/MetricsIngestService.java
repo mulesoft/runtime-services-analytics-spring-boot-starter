@@ -43,7 +43,7 @@ import java.util.stream.Collectors;
 
 public class MetricsIngestService {
 
-    private static final long CACHE_SIZE = 2048;
+    private long cacheSize;
 
     private static Analytics segment;
 
@@ -75,11 +75,12 @@ public class MetricsIngestService {
                                 @Value("${analytics.senderId}") String analyticsSenderId,
                                 @Value("${analytics.ingest.granularity}") int granularity,
                                 @Value("${analytics.ingest.period}") int period,
-                                @Value("${analytics.ingest.poolSize:8}") int poolSize) {
+                                @Value("${analytics.ingest.poolSize:8}") int poolSize,
+                                @Value("${analytics.ingest.cacheSize:2048}") long cacheSize) {
         this.analyticsSenderId = analyticsSenderId;
 
         this.metricsCache = CacheBuilder.newBuilder()
-                .maximumSize(CACHE_SIZE)
+                .maximumSize(cacheSize)
                 .build(
                         new CacheLoader<MetricsKey, MetricsCounts>() {
                             @Override
@@ -100,6 +101,8 @@ public class MetricsIngestService {
         this.granularity = granularity;
 
         this.period = period;
+
+        this.cacheSize = cacheSize;
 
         updateNextFlushTime();
     }
@@ -177,7 +180,7 @@ public class MetricsIngestService {
             if (logger.isDebugEnabled()) {
                 logger.debug("metrics updated for key {}, notificationCount {}, billableUnitCount {}, byteCount {}", key, count, billableUnitCount, byteCount);
             }
-            if(metricsCache.size() >= CACHE_SIZE && getSecondsUntilNextFlush() > 0) {
+            if(metricsCache.size() >= cacheSize && getSecondsUntilNextFlush() > 0) {
                 flush();
                 updateNextFlushTime();
             }
