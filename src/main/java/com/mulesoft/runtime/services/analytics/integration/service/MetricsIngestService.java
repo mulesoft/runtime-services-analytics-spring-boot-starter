@@ -180,7 +180,7 @@ public class MetricsIngestService {
             if (logger.isDebugEnabled()) {
                 logger.debug("metrics updated for key {}, notificationCount {}, billableUnitCount {}, byteCount {}", key, count, billableUnitCount, byteCount);
             }
-            if(metricsCache.size() >= cacheSize && getSecondsUntilNextFlush() > 0) {
+            if(metricsCache.size() == cacheSize && getSecondsUntilNextFlush() > 0) {
                 flush();
                 updateNextFlushTime();
             }

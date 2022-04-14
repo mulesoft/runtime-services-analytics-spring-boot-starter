@@ -48,7 +48,7 @@ public class AnalyticsAutoConfiguration {
                                                      @Value("${analytics.ingest.granularity}") int granularity,
                                                      @Value("${analytics.ingest.period}") int period,
                                                      @Value("${analytics.ingest.poolSize:8}") int poolSize,
-                                                     @Value("${analytics.ingest.cache.size:2048}") long cacheSize) {
+                                                     @Value("${analytics.ingest.cacheSize:2048}") long cacheSize) {
         return new MetricsIngestService(anypointAnalyticsClient, writekey, analyticsSenderId, granularity, period, poolSize, cacheSize);
     }
 
