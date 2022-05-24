@@ -17,7 +17,6 @@
         <maven.compiler.target>1.8</maven.compiler.target>
         <platform.client.version>1.2.6</platform.client.version>
         <jackson.version>2.9.6</jackson.version>
-        <segmentanalytics.version>3.1.3</segmentanalytics.version>
         <slf4j.version>1.7.25</slf4j.version>
         <springboot.version>1.5.22.RELEASE</springboot.version>
         <runtime-services-newrelic-integration.version>1.0.5</runtime-services-newrelic-integration.version>
@@ -49,16 +48,6 @@
             <groupId>org.slf4j</groupId>
             <artifactId>jcl-over-slf4j</artifactId>
             <version>${slf4j.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>com.segment.analytics.java</groupId>
-            <artifactId>analytics-core</artifactId>
-            <version>${segmentanalytics.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>com.segment.analytics.java</groupId>
-            <artifactId>analytics</artifactId>
-            <version>${segmentanalytics.version}</version>
         </dependency>
         <dependency>
             <groupId>com.mulesoft.anypoint.rest</groupId>
@@ -394,16 +383,4 @@
             <distribution>repo</distribution>
         </license>
     </licenses>
-
-    <issueManagement>
-        <system>Jira</system>
-        <url>https://www.mulesoft.org/jira/browse/MQ</url>
-    </issueManagement>
-
-    <scm>
-        <connection>scm:git:git://github.com/mulesoft/anypoint-mq.git</connection>
-        <developerConnection>scm:git:git@github.com:mulesoft/anypoint-mq.git</developerConnection>
-        <url>http://github.com/mulesoft/anypoint-mq</url>
-        <tag>HEAD</tag>
-    </scm>
 </project>

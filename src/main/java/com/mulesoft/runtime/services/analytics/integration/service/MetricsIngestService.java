@@ -18,24 +18,19 @@ import com.mulesoft.runtime.services.analytics.integration.model.MetricsIngestEx
 import com.mulesoft.runtime.services.analytics.integration.model.MetricsIngestItem;
 import com.mulesoft.runtime.services.analytics.integration.model.MetricsKey;
 import com.mulesoft.runtime.services.analytics.integration.model.RawResponse;
-import com.segment.analytics.Analytics;
-import com.segment.analytics.messages.TrackMessage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import rx.Subscriber;
 
 import javax.inject.Inject;
-import javax.inject.Named;
 import java.time.Instant;
 import java.time.OffsetDateTime;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.atomic.LongAdder;
@@ -44,8 +39,6 @@ import java.util.stream.Collectors;
 public class MetricsIngestService {
 
     private long cacheSize;
-
-    private static Analytics segment;
 
     private ConcurrentHashMap<EventKey, LongAdder> data;
 
@@ -71,7 +64,6 @@ public class MetricsIngestService {
 
     @Inject
     public MetricsIngestService(AnalyticsClient anypointAnalyticsClient,
-                                @Value("${segment.writekey}") String writekey,
                                 @Value("${analytics.senderId}") String analyticsSenderId,
                                 @Value("${analytics.ingest.granularity}") int granularity,
                                 @Value("${analytics.ingest.period}") int period,
@@ -91,8 +83,6 @@ public class MetricsIngestService {
                 );
 
         this.anypointAnalyticsClient = anypointAnalyticsClient;
-
-        segment = Analytics.builder(writekey).build();
 
         data = new ConcurrentHashMap<>();
 
@@ -212,26 +202,6 @@ public class MetricsIngestService {
         return metricsBatch;
     }
 
-    public void flushAllSegmentData() {
-        data.forEach((key, val) -> {
-            Map<String, String> properties = new HashMap<>();
-            properties.put("organizationId", key.getOrganizationId());
-            properties.put("environmentId", key.getEnvironmentId());
-            properties.put("resourceId", key.getResourceId());
-            properties.put("regionId", key.getRegionId());
-            properties.put("timeGranularity", Integer.toString(granularity));
-            properties.put("timeBucket", key.getDateTime().toString());
-            properties.put("count", Long.toString(val.sumThenReset()));
-            segment.enqueue(
-                TrackMessage.builder(key.getEvent())
-                            .userId(key.getOrganizationId())
-                            .properties(properties)
-            );
-        });
-        data.clear();
-        segment.flush();
-    }
-
     public void flushAll() {
         internalFlush(getAllMetrics());
     }
@@ -252,9 +222,5 @@ public class MetricsIngestService {
 
     private List<MetricsKey> getAllMetrics() {
         return metricsCache.asMap().keySet().stream().collect(Collectors.toList());
-    }
-
-    public void computeSegmentData(EventKey eventKey) {
-        data.computeIfAbsent(eventKey, key -> new LongAdder()).increment();
     }
 }

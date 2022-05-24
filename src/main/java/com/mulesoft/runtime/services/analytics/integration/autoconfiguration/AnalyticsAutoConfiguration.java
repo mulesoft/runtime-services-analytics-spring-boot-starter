@@ -14,7 +14,6 @@ import com.mulesoft.runtime.services.analytics.integration.service.AnalyticsInge
 import com.mulesoft.runtime.services.analytics.integration.service.AnalyticsQueryClient;
 import com.mulesoft.runtime.services.analytics.integration.service.MetricsIngestService;
 import com.mulesoft.runtime.services.analytics.integration.subscriber.AnalyticsNotificationSubscriber;
-import com.mulesoft.runtime.services.analytics.integration.subscriber.SegmentNotificationSubscriber;
 import com.mulesoft.runtime.services.newrelic.NewRelicNotifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -34,22 +33,14 @@ public class AnalyticsAutoConfiguration {
     }
 
     @Bean
-    @ConditionalOnProperty(value = "segment.subscription.enabled", havingValue = "true", matchIfMissing = true)
-    public SegmentNotificationSubscriber segmentNotificationSubscriber(MetricsIngestService metricsIngestService,
-                                                                       @Value("${analytics.ingest.poolSize:8}") int poolSize) {
-        return new SegmentNotificationSubscriber(metricsIngestService, poolSize);
-    }
-
-    @Bean
     @ConditionalOnProperty(value = "analytics.subscription.enabled", havingValue = "true", matchIfMissing = true)
     public MetricsIngestService metricsIngestService(AnalyticsClient anypointAnalyticsClient,
-                                                     @Value("${segment.writekey}") String writekey,
                                                      @Value("${analytics.senderId}") String analyticsSenderId,
                                                      @Value("${analytics.ingest.granularity}") int granularity,
                                                      @Value("${analytics.ingest.period}") int period,
                                                      @Value("${analytics.ingest.poolSize:8}") int poolSize,
                                                      @Value("${analytics.ingest.cacheSize:2048}") long cacheSize) {
-        return new MetricsIngestService(anypointAnalyticsClient, writekey, analyticsSenderId, granularity, period, poolSize, cacheSize);
+        return new MetricsIngestService(anypointAnalyticsClient, analyticsSenderId, granularity, period, poolSize, cacheSize);
     }
 
     @Bean
