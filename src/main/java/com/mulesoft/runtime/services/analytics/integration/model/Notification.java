@@ -26,7 +26,5 @@ public interface Notification {
 
     String getResourceName();
 
-    boolean shouldNotifySegment();
-
     EventKey toEventKey(OffsetDateTime offsetDateTime);
 }
