@@ -1,7 +1,0 @@
-product: runtime-services
-component: analytics-spring-boot-starter
-version: '1.1'
-
-strategy: mvn-lib
-
-slackChannel: runtime-services-bot
