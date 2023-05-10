@@ -1,0 +1,8 @@
+product: runtime-services
+component: analytics-spring-boot-starter
+version: "1.1"
+builder:
+  name: java-maven-lib
+  version: "8"
+notifications:
+  slackChannel: runtime-services-bot
